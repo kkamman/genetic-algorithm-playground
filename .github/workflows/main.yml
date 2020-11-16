@@ -1,0 +1,25 @@
+name: Build, Test and Deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build-test-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: Install
+        run: npm ci
+      - name: Build
+        run: npm run build -- --prod --base-href "https://kkamman.github.io/genetic-algorithm-playground/"
+      - name: Test
+        run: npm run test -- --no-progress
+      - name: Deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx angular-cli-ghpages --dir=dist/genetic-algorithm-playground
